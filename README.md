@@ -1,6 +1,6 @@
-# AI Model Preprocessing and Backend Integration
+# Statistical Analysis Tool
 
-This project provides a backend C implementation for running various machine learning models (e.g., Linear Regression, K-Nearest Neighbors, Support Vector Machines) and performing tasks such as data preprocessing, dimensionality reduction, and model evaluation. The backend integrates Python for executing the Linear Regression model and utilizes Lex/Flex and Yacc/Bison for processing input.
+This project provides a C implementation for running various machine learning models (e.g., Linear Regression, K-Nearest Neighbors, Support Vector Machines) and performing tasks such as data preprocessing, dimensionality reduction, and model evaluation. The backend integrates Python for executing the Linear Regression model and utilizes Lex/Flex and Yacc/Bison for processing input.
 
 ## Features
 - **Linear Regression**: Integrates Python for performing linear regression on data.
@@ -28,3 +28,5 @@ This project provides a backend C implementation for running various machine lea
    ```bash
    git clone https://github.com/YourUsername/your-repository.git
    cd your-repository
+   ./build.sh
+   ./statpiler < <program_name>.txt
