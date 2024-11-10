@@ -1,6 +1,6 @@
 # Statistical Analysis Tool
 
-This project provides a C implementation for running various machine learning models (e.g., Linear Regression, K-Nearest Neighbors, Support Vector Machines) and performing tasks such as data preprocessing, dimensionality reduction, and model evaluation. The backend integrates Python for executing the Linear Regression model and utilizes Lex/Flex and Yacc/Bison for processing input.
+This project is a Domain-Specific Language (DSL) Compiler designed to parse and execute commands written in a custom DSL for data processing and machine learning tasks. The compiler is built using Bison for parsing and Flex for lexical analysis, with the backend written in C and integrated with Python for executing specific machine learning functions.
 
 ## Features
 - **Linear Regression**: Integrates Python for performing linear regression on data.
