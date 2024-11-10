@@ -13,6 +13,7 @@
 "visualize"         { return VISUALIZE; }
 "model"             { return MODEL; }
 "export"            { return EXPORT; }
+"setfile"           { return SETFILE; }
 "split"             { return SPLIT; }
 "summarize"         { return SUMMARIZE; }
 "auto_model"        { return AUTO_MODEL; }

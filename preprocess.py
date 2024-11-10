@@ -32,6 +32,8 @@ def preprocess_data(filename, target):
 
 def linear_regression(filename, target):
     # Load the dataset
+    filename = filename[1:-1]
+    target = target[1:-1]
     data = pd.read_csv(filename)
     
     # Separate features and target variable

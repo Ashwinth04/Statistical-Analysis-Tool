@@ -21,6 +21,7 @@ void set_target_variable(char* variable);
 char* filename;
 double svm_gamma = 0.0; 
 double svm_C = 1.0;
+char *target;
 %}
 
 %union {
@@ -31,7 +32,7 @@ double svm_C = 1.0;
 
 %token <num> NUMBER
 %token <str> STRING_LITERAL
-%token IMPORT PREPROCESS VISUALIZE MODEL EXPORT SPLIT SUMMARIZE
+%token IMPORT PREPROCESS VISUALIZE MODEL EXPORT SPLIT SUMMARIZE SETFILE
 %token KERNEL AUTO_MODEL X Y C GAMMA TRAIN_SIZE METHOD TARGET SAVE_MODEL EVAL
 %type <str> program statement preprocessing method_clause visualize model
 
@@ -60,11 +61,12 @@ statement:
                                       }
                                       free($2);
                                     }
-    | TARGET STRING_LITERAL          { set_target_variable($2); printf("Target variable set: %s\n", $2); free($2); }
+    | TARGET STRING_LITERAL          { target = strdup($2); printf("Target variable set: %s\n", target); free($2); }
     | SUMMARIZE                      { printf("Generating summary report.\n"); }
     | EXPORT STRING_LITERAL          { export_to_file($2); }
     | SPLIT STRING_LITERAL           { set_split_size($2); }
     | EVAL                           { printf("Evaluating model performance.\n"); evaluate_model(); }
+    | SETFILE STRING_LITERAL         { filename = strdup($2); }
     ;
 
 preprocessing:
@@ -121,7 +123,8 @@ model:
       STRING_LITERAL                 { 
                                       if (strcmp($1, "\"Linear Regression\"") == 0) {
                                           $$ = strdup("Linear Regression");
-                                          run_linear_regression();
+                                          printf("%s\n",target);
+                                          run_linear_regression(filename,target);
                                       } else if (strcmp($1, "\"KNN\"") == 0) {
                                           $$ = strdup("KNN");
                                           run_knn();

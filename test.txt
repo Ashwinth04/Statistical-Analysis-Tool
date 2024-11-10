@@ -1,6 +1,7 @@
 import "data.csv"
 preprocess "Scaling"
-target "price"
+target "variety"
+setfile "processed_data.csv"
 preprocess "Dimensionality Reduction" method "PCA"
 export "processed.csv"
 visualize "Box Plot"

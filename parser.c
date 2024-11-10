@@ -93,7 +93,7 @@ double svm_gamma = 0.0;
 double svm_C = 1.0;
 char *target;
 
-#line 97 "parser.tab.c"
+#line 97 "parser.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -116,7 +116,7 @@ char *target;
 #  endif
 # endif
 
-#include "parser.tab.h"
+#include "parser.h"
 /* Symbol kind.  */
 enum yysymbol_kind_t
 {
@@ -1122,31 +1122,31 @@ yyreduce:
   case 4: /* statement: IMPORT STRING_LITERAL  */
 #line 47 "parser.y"
                                      { filename = strdup((yyvsp[0].str)); printf("Importing data file: %s\n", (yyvsp[0].str)); free((yyvsp[0].str)); }
-#line 1126 "parser.tab.c"
+#line 1126 "parser.c"
     break;
 
   case 5: /* statement: PREPROCESS preprocessing  */
 #line 48 "parser.y"
                                      { printf("Preprocess called with: %s\n", (yyvsp[0].str)); free((yyvsp[0].str)); }
-#line 1132 "parser.tab.c"
+#line 1132 "parser.c"
     break;
 
   case 6: /* statement: VISUALIZE visualize  */
 #line 49 "parser.y"
                                      { printf("Visualization type: %s\n", (yyvsp[0].str)); free((yyvsp[0].str)); }
-#line 1138 "parser.tab.c"
+#line 1138 "parser.c"
     break;
 
   case 7: /* statement: MODEL model  */
 #line 50 "parser.y"
                                      { printf("Model specified: %s\n", (yyvsp[0].str)); free((yyvsp[0].str)); }
-#line 1144 "parser.tab.c"
+#line 1144 "parser.c"
     break;
 
   case 8: /* statement: MODEL AUTO_MODEL  */
 #line 51 "parser.y"
                                      { printf("Auto model selection enabled.\n"); run_auto_model(); }
-#line 1150 "parser.tab.c"
+#line 1150 "parser.c"
     break;
 
   case 9: /* statement: MODEL STRING_LITERAL GAMMA '=' NUMBER C '=' NUMBER  */
@@ -1163,43 +1163,43 @@ yyreduce:
                                       }
                                       free((yyvsp[-6].str));
                                     }
-#line 1167 "parser.tab.c"
+#line 1167 "parser.c"
     break;
 
   case 10: /* statement: TARGET STRING_LITERAL  */
 #line 64 "parser.y"
                                      { target = strdup((yyvsp[0].str)); printf("Target variable set: %s\n", target); free((yyvsp[0].str)); }
-#line 1173 "parser.tab.c"
+#line 1173 "parser.c"
     break;
 
   case 11: /* statement: SUMMARIZE  */
 #line 65 "parser.y"
                                      { printf("Generating summary report.\n"); }
-#line 1179 "parser.tab.c"
+#line 1179 "parser.c"
     break;
 
   case 12: /* statement: EXPORT STRING_LITERAL  */
 #line 66 "parser.y"
                                      { export_to_file((yyvsp[0].str)); }
-#line 1185 "parser.tab.c"
+#line 1185 "parser.c"
     break;
 
   case 13: /* statement: SPLIT STRING_LITERAL  */
 #line 67 "parser.y"
                                      { set_split_size((yyvsp[0].str)); }
-#line 1191 "parser.tab.c"
+#line 1191 "parser.c"
     break;
 
   case 14: /* statement: EVAL  */
 #line 68 "parser.y"
                                      { printf("Evaluating model performance.\n"); evaluate_model(); }
-#line 1197 "parser.tab.c"
+#line 1197 "parser.c"
     break;
 
   case 15: /* statement: SETFILE STRING_LITERAL  */
 #line 69 "parser.y"
                                      { filename = strdup((yyvsp[0].str)); }
-#line 1203 "parser.tab.c"
+#line 1203 "parser.c"
     break;
 
   case 16: /* preprocessing: STRING_LITERAL  */
@@ -1214,7 +1214,7 @@ yyreduce:
                                       }
                                       free((yyvsp[0].str));
                                     }
-#line 1218 "parser.tab.c"
+#line 1218 "parser.c"
     break;
 
   case 17: /* preprocessing: STRING_LITERAL METHOD STRING_LITERAL  */
@@ -1239,7 +1239,7 @@ yyreduce:
                                       free((yyvsp[-2].str));
                                       free((yyvsp[0].str));
                                     }
-#line 1243 "parser.tab.c"
+#line 1243 "parser.c"
     break;
 
   case 18: /* visualize: STRING_LITERAL  */
@@ -1253,7 +1253,7 @@ yyreduce:
                                       }
                                       free((yyvsp[0].str));
                                     }
-#line 1257 "parser.tab.c"
+#line 1257 "parser.c"
     break;
 
   case 19: /* visualize: X '=' STRING_LITERAL Y '=' STRING_LITERAL  */
@@ -1263,7 +1263,7 @@ yyreduce:
                                       free((yyvsp[-3].str));
                                       free((yyvsp[0].str));
                                     }
-#line 1267 "parser.tab.c"
+#line 1267 "parser.c"
     break;
 
   case 20: /* model: STRING_LITERAL  */
@@ -1285,11 +1285,11 @@ yyreduce:
                                       }
                                       free((yyvsp[0].str));
                                     }
-#line 1289 "parser.tab.c"
+#line 1289 "parser.c"
     break;
 
 
-#line 1293 "parser.tab.c"
+#line 1293 "parser.c"
 
       default: break;
     }

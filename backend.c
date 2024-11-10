@@ -1,13 +1,53 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <Python.h>
 
-void run_linear_regression(const char *filename) {
-    if (filename == NULL) {
-        fprintf(stderr, "Error: No data file imported.\n");
-        return;
+void run_linear_regression(const char *filename,char *target) {
+    Py_Initialize();
+    printf("%s",filename);
+    // Add current directory to the sys.path to enable importing from the current directory
+    PyRun_SimpleString("import sys; sys.path.append('.')");
+
+    // Import the Python script (ensure that preprocess.py is in the same directory)
+    PyObject *pName = PyUnicode_DecodeFSDefault("preprocess");  // Name of the Python file (without .py)
+    PyObject *pModule = PyImport_Import(pName);
+    
+    if (pModule != NULL) {
+        // Get the preprocess_data function from the module
+        PyObject *pFunc = PyObject_GetAttrString(pModule, "linear_regression");
+        
+        if (PyCallable_Check(pFunc)) {
+            // Create Python arguments
+            PyObject *pArgs = PyTuple_Pack(2, 
+                PyUnicode_FromString(filename), 
+                PyUnicode_FromString(target)
+            );
+            
+            // Call the function
+            PyObject *pValue = PyObject_CallObject(pFunc, pArgs);
+            
+            if (pValue != NULL) {
+                printf("Data processed successfully.\n");
+                Py_DECREF(pValue);
+            } else {
+                PyErr_Print();
+            }
+            
+            // Clean up
+            Py_XDECREF(pArgs);
+            Py_XDECREF(pFunc);
+        } else {
+            PyErr_Print();
+        }
+        
+        // Clean up
+        Py_XDECREF(pModule);
+    } else {
+        PyErr_Print();
     }
-
-    printf("Running Linear Regression on %s\n", filename);
+    
+    // Finalize the Python interpreter
+    Py_Finalize();
 }
 void run_knn() {
     printf("Running K-Nearest Neighbors...\n");
