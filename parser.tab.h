@@ -59,7 +59,21 @@ extern int yydebug;
     IMPORT = 260,                  /* IMPORT  */
     PREPROCESS = 261,              /* PREPROCESS  */
     VISUALIZE = 262,               /* VISUALIZE  */
-    MODEL = 263                    /* MODEL  */
+    MODEL = 263,                   /* MODEL  */
+    EXPORT = 264,                  /* EXPORT  */
+    SPLIT = 265,                   /* SPLIT  */
+    SUMMARIZE = 266,               /* SUMMARIZE  */
+    KERNEL = 267,                  /* KERNEL  */
+    AUTO_MODEL = 268,              /* AUTO_MODEL  */
+    X = 269,                       /* X  */
+    Y = 270,                       /* Y  */
+    C = 271,                       /* C  */
+    GAMMA = 272,                   /* GAMMA  */
+    TRAIN_SIZE = 273,              /* TRAIN_SIZE  */
+    METHOD = 274,                  /* METHOD  */
+    TARGET = 275,                  /* TARGET  */
+    SAVE_MODEL = 276,              /* SAVE_MODEL  */
+    EVAL = 277                     /* EVAL  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -68,12 +82,13 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 18 "parser.y"
+#line 26 "parser.y"
 
     int num;
-    char *str;  // Add char* for string-related non-terminals
+    char *str;
+    double val;
 
-#line 77 "parser.tab.h"
+#line 92 "parser.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

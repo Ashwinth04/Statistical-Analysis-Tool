@@ -1,0 +1,12 @@
+import "data.csv"
+preprocess "Scaling"
+target "price"
+preprocess "Dimensionality Reduction" method "PCA"
+export "processed.csv"
+visualize "Box Plot"
+visualize "Scatter Plot"
+model "Linear Regression"
+export "output.csv"
+split "0.8"
+model auto_model
+eval
