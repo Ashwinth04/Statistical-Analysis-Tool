@@ -1,8 +1,9 @@
 import "data.csv"
-preprocess "Scaling"
 target "variety"
-setfile "processed_data.csv"
-preprocess "Dimensionality Reduction" method "PCA"
+preprocess "General"
+import "processed_data.csv"
+det_outliers
+preprocess "Dimensionality Reduction" method "PCA" dim "2"
 export "processed.csv"
 visualize "Box Plot"
 visualize "Scatter Plot"
@@ -10,4 +11,3 @@ model "Linear Regression"
 export "output.csv"
 split "0.8"
 model auto_model
-eval

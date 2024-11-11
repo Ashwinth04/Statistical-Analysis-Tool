@@ -74,7 +74,8 @@ extern int yydebug;
     METHOD = 275,                  /* METHOD  */
     TARGET = 276,                  /* TARGET  */
     SAVE_MODEL = 277,              /* SAVE_MODEL  */
-    EVAL = 278                     /* EVAL  */
+    DET_OUTLIERS = 278,            /* DET_OUTLIERS  */
+    DIM = 279                      /* DIM  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -83,13 +84,13 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 27 "parser.y"
+#line 28 "parser.y"
 
     int num;
     char *str;
     double val;
 
-#line 93 "parser.h"
+#line 94 "parser.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

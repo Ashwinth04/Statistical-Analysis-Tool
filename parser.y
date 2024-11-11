@@ -9,14 +9,15 @@ extern void yyerror(const char *s);
 void run_linear_regression();
 void run_knn();
 void run_svm(double gamma, double C);
-void preprocess();
+void preprocess(char *path,char* target);
 void export_to_file();
 void set_split_size();
-void reduce_dimensions(char* method);
-void scale_data(char* path);
+void reduce_dimensions(char* path,char* method,char *dimensions);
 void run_auto_model();
-void evaluate_model();
 void set_target_variable(char* variable);
+void initialize_python();
+void print_outliers();
+void vis_boxplot();
 
 char* filename;
 double svm_gamma = 0.0; 
@@ -33,7 +34,8 @@ char *target;
 %token <num> NUMBER
 %token <str> STRING_LITERAL
 %token IMPORT PREPROCESS VISUALIZE MODEL EXPORT SPLIT SUMMARIZE SETFILE
-%token KERNEL AUTO_MODEL X Y C GAMMA TRAIN_SIZE METHOD TARGET SAVE_MODEL EVAL
+%token KERNEL AUTO_MODEL X Y C GAMMA TRAIN_SIZE METHOD TARGET SAVE_MODEL DET_OUTLIERS
+%token DIM
 %type <str> program statement preprocessing method_clause visualize model
 
 %%
@@ -44,7 +46,7 @@ program:
     ;
 
 statement:
-      IMPORT STRING_LITERAL          { filename = strdup($2); printf("Importing data file: %s\n", $2); free($2); }
+      IMPORT STRING_LITERAL          { filename = strdup($2); initialize_python(); printf("Importing data file: %s\n", $2); free($2); }
     | PREPROCESS preprocessing       { printf("Preprocess called with: %s\n", $2); free($2); }
     | VISUALIZE visualize            { printf("Visualization type: %s\n", $2); free($2); }
     | MODEL model                    { printf("Model specified: %s\n", $2); free($2); }
@@ -65,29 +67,29 @@ statement:
     | SUMMARIZE                      { printf("Generating summary report.\n"); }
     | EXPORT STRING_LITERAL          { export_to_file($2); }
     | SPLIT STRING_LITERAL           { set_split_size($2); }
-    | EVAL                           { printf("Evaluating model performance.\n"); evaluate_model(); }
+    | DET_OUTLIERS                   { printf("Evaluating model performance.\n"); print_outliers(filename,target); }
     | SETFILE STRING_LITERAL         { filename = strdup($2); }
     ;
 
 preprocessing:
       STRING_LITERAL                 { 
-                                      if (strcmp($1, "\"Scaling\"") == 0) {
-                                          $$ = strdup("Scaling");
-                                          scale_data(filename);
+                                      if (strcmp($1, "\"General\"") == 0) {
+                                          $$ = strdup("General");
+                                          preprocess(filename,target);
                                       } else {
-                                          yyerror("Invalid preprocessing type. Expected \"Scaling\" or \"Dimensionality Reduction\"");
+                                          yyerror("Invalid preprocessing type. Expected \"General\" or \"Dimensionality Reduction\"");
                                           YYERROR;
                                       }
                                       free($1);
                                     }
-    | STRING_LITERAL METHOD STRING_LITERAL  { 
+    | STRING_LITERAL METHOD STRING_LITERAL DIM STRING_LITERAL  { 
                                       if (strcmp($1, "\"Dimensionality Reduction\"") == 0) {
                                           if (strcmp($3, "\"PCA\"") == 0 ||
                                               strcmp($3, "\"LDA\"") == 0 ||
                                               strcmp($3, "\"TSNE\"") == 0) {
                                               char buffer[100];
                                               snprintf(buffer, sizeof(buffer), "Dimensionality Reduction with %s", $3);
-                                              reduce_dimensions($3);
+                                              reduce_dimensions(filename,$3,$5);
                                               $$ = strdup(buffer);
                                           } else {
                                               yyerror("Invalid method. Expected PCA, LDA, or TSNE");
@@ -106,6 +108,7 @@ visualize:
       STRING_LITERAL                 {
                                       if (strcmp($1, "\"Box Plot\"") == 0 || strcmp($1, "\"Scatter Plot\"") == 0) {
                                           $$ = strdup($1);
+                                          vis_boxplot(filename,target);
                                       } else {
                                           yyerror("Invalid visualization type. Expected \"Box Plot\" or \"Scatter Plot\"");
                                           YYERROR;

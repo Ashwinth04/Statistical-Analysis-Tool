@@ -2,64 +2,171 @@
 #include <stdlib.h>
 #include <Python.h>
 
-void run_linear_regression(const char *filename,char *target) {
+void initialize_python() {
     Py_Initialize();
-    printf("%s",filename);
-    // Add current directory to the sys.path to enable importing from the current directory
-    PyRun_SimpleString("import sys; sys.path.append('.')");
+    PyRun_SimpleString("import sys; sys.path.append('.')");  // Add current directory to sys.path
+}
 
-    // Import the Python script (ensure that preprocess.py is in the same directory)
-    PyObject *pName = PyUnicode_DecodeFSDefault("preprocess");  // Name of the Python file (without .py)
+void finalize_python() {
+    Py_Finalize();
+}
+
+void run_linear_regression(const char *filename, char *target) {
+    printf("Running Linear Regression with %s\n", filename);
+    PyObject *pName = PyUnicode_DecodeFSDefault("preprocess");
     PyObject *pModule = PyImport_Import(pName);
     
     if (pModule != NULL) {
-        // Get the preprocess_data function from the module
         PyObject *pFunc = PyObject_GetAttrString(pModule, "linear_regression");
         
         if (PyCallable_Check(pFunc)) {
-            // Create Python arguments
-            PyObject *pArgs = PyTuple_Pack(2, 
-                PyUnicode_FromString(filename), 
-                PyUnicode_FromString(target)
-            );
-            
-            // Call the function
+            PyObject *pArgs = PyTuple_Pack(2, PyUnicode_FromString(filename), PyUnicode_FromString(target));
             PyObject *pValue = PyObject_CallObject(pFunc, pArgs);
             
             if (pValue != NULL) {
-                printf("Data processed successfully.\n");
+                printf("Linear Regression completed successfully.\n");
                 Py_DECREF(pValue);
             } else {
                 PyErr_Print();
             }
-            
-            // Clean up
             Py_XDECREF(pArgs);
             Py_XDECREF(pFunc);
         } else {
             PyErr_Print();
         }
-        
-        // Clean up
         Py_XDECREF(pModule);
     } else {
         PyErr_Print();
     }
-    
-    // Finalize the Python interpreter
-    Py_Finalize();
 }
+
+void reduce_dimensions(char *filename, char *method_name, char *dimensions) {
+    printf("Reducing dimensions for %s using %s\n", filename, method_name);
+    PyObject *pName = PyUnicode_DecodeFSDefault("preprocess");
+    PyObject *pModule = PyImport_Import(pName);
+    
+    if (pModule != NULL) {
+        PyObject *pFunc = PyObject_GetAttrString(pModule, "reduce_dimensions");
+        
+        if (PyCallable_Check(pFunc)) {
+            PyObject *pArgs = PyTuple_Pack(3, PyUnicode_FromString(filename),
+                                           PyUnicode_FromString(method_name),
+                                           PyUnicode_FromString(dimensions));
+            PyObject *pValue = PyObject_CallObject(pFunc, pArgs);
+            
+            if (pValue != NULL) {
+                printf("Dimensionality reduction completed successfully.\n");
+                Py_DECREF(pValue);
+            } else {
+                PyErr_Print();
+            }
+            Py_XDECREF(pArgs);
+            Py_XDECREF(pFunc);
+        } else {
+            PyErr_Print();
+        }
+        Py_XDECREF(pModule);
+    } else {
+        PyErr_Print();
+    }
+}
+
+void preprocess(char *filename,char* target)
+{
+    printf("Processing data...\n");
+    PyObject *pName = PyUnicode_DecodeFSDefault("preprocess");
+    PyObject *pModule = PyImport_Import(pName);
+    
+    if (pModule != NULL) {
+        PyObject *pFunc = PyObject_GetAttrString(pModule, "preprocess_data");
+        
+        if (PyCallable_Check(pFunc)) {
+            PyObject *pArgs = PyTuple_Pack(2, PyUnicode_FromString(filename),
+                                           PyUnicode_FromString(target));
+            PyObject *pValue = PyObject_CallObject(pFunc, pArgs);
+            
+            if (pValue != NULL) {
+                printf("Processing done successfully !!\n");
+                Py_DECREF(pValue);
+            } else {
+                PyErr_Print();
+            }
+            Py_XDECREF(pArgs);
+            Py_XDECREF(pFunc);
+        } else {
+            PyErr_Print();
+        }
+        Py_XDECREF(pModule);
+    } else {
+        PyErr_Print();
+    }
+}
+
+void print_outliers(char* filename,char *target)
+{
+    printf("Detecting outliers...\n");
+    PyObject *pName = PyUnicode_DecodeFSDefault("preprocess");
+    PyObject *pModule = PyImport_Import(pName);
+    
+    if (pModule != NULL) {
+        PyObject *pFunc = PyObject_GetAttrString(pModule, "detect_outliers");
+        
+        if (PyCallable_Check(pFunc)) {
+            PyObject *pArgs = PyTuple_Pack(2, PyUnicode_FromString(filename),
+                                           PyUnicode_FromString(target));
+            PyObject *pValue = PyObject_CallObject(pFunc, pArgs);
+            
+            if (pValue != NULL) {
+                Py_DECREF(pValue);
+            } else {
+                PyErr_Print();
+            }
+            Py_XDECREF(pArgs);
+            Py_XDECREF(pFunc);
+        } else {
+            PyErr_Print();
+        }
+        Py_XDECREF(pModule);
+    } else {
+        PyErr_Print();
+    }
+}
+
+void vis_boxplot(char *filename, char* target)
+{
+    PyObject *pName = PyUnicode_DecodeFSDefault("preprocess");
+    PyObject *pModule = PyImport_Import(pName);
+    
+    if (pModule != NULL) {
+        PyObject *pFunc = PyObject_GetAttrString(pModule, "boxplot");
+        
+        if (PyCallable_Check(pFunc)) {
+            PyObject *pArgs = PyTuple_Pack(2, PyUnicode_FromString(filename),
+                                           PyUnicode_FromString(target));
+            PyObject *pValue = PyObject_CallObject(pFunc, pArgs);
+            
+            if (pValue != NULL) {
+                Py_DECREF(pValue);
+            } else {
+                PyErr_Print();
+            }
+            Py_XDECREF(pArgs);
+            Py_XDECREF(pFunc);
+        } else {
+            PyErr_Print();
+        }
+        Py_XDECREF(pModule);
+    } else {
+        PyErr_Print();
+    }
+}
+
 void run_knn() {
     printf("Running K-Nearest Neighbors...\n");
 }
 
 void run_svm() {
     printf("Running Support Vector Machines...\n");
-}
-
-void preprocess(char *type)
-{
-    printf("Preprocessing type: %s\n",type);
 }
 
 void export_to_file(char *filename)
@@ -74,15 +181,6 @@ void set_split_size(char *split)
     printf("Split size is %f\n",num);
 }
 
-void reduce_dimensions(char *method_name)
-{
-    printf("Dimensionalty reduction. Method: %s\n",method_name);
-}
-
-void scale_data(char *path)
-{
-    printf("Scaling the data on %s\n",path);
-}
 
 void run_auto_model() {
     printf("Automatically selecting and training a model...\n");
@@ -92,9 +190,4 @@ void run_auto_model() {
 void set_target_variable(char* variable) {
     printf("Setting target variable: %s\n", variable);
     // Add logic to set the target variable here
-}
-
-void evaluate_model() {
-    printf("Evaluating model performance...\n");
-    // Add evaluation logic here
 }

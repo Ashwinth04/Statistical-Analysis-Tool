@@ -79,21 +79,22 @@ extern void yyerror(const char *s);
 void run_linear_regression();
 void run_knn();
 void run_svm(double gamma, double C);
-void preprocess();
+void preprocess(char *path,char* target);
 void export_to_file();
 void set_split_size();
-void reduce_dimensions(char* method);
-void scale_data(char* path);
+void reduce_dimensions(char* path,char* method,char *dimensions);
 void run_auto_model();
-void evaluate_model();
 void set_target_variable(char* variable);
+void initialize_python();
+void print_outliers();
+void vis_boxplot();
 
 char* filename;
 double svm_gamma = 0.0; 
 double svm_C = 1.0;
 char *target;
 
-#line 97 "parser.c"
+#line 98 "parser.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -144,14 +145,15 @@ enum yysymbol_kind_t
   YYSYMBOL_METHOD = 20,                    /* METHOD  */
   YYSYMBOL_TARGET = 21,                    /* TARGET  */
   YYSYMBOL_SAVE_MODEL = 22,                /* SAVE_MODEL  */
-  YYSYMBOL_EVAL = 23,                      /* EVAL  */
-  YYSYMBOL_24_ = 24,                       /* '='  */
-  YYSYMBOL_YYACCEPT = 25,                  /* $accept  */
-  YYSYMBOL_program = 26,                   /* program  */
-  YYSYMBOL_statement = 27,                 /* statement  */
-  YYSYMBOL_preprocessing = 28,             /* preprocessing  */
-  YYSYMBOL_visualize = 29,                 /* visualize  */
-  YYSYMBOL_model = 30                      /* model  */
+  YYSYMBOL_DET_OUTLIERS = 23,              /* DET_OUTLIERS  */
+  YYSYMBOL_DIM = 24,                       /* DIM  */
+  YYSYMBOL_25_ = 25,                       /* '='  */
+  YYSYMBOL_YYACCEPT = 26,                  /* $accept  */
+  YYSYMBOL_program = 27,                   /* program  */
+  YYSYMBOL_statement = 28,                 /* statement  */
+  YYSYMBOL_preprocessing = 29,             /* preprocessing  */
+  YYSYMBOL_visualize = 30,                 /* visualize  */
+  YYSYMBOL_model = 31                      /* model  */
 };
 typedef enum yysymbol_kind_t yysymbol_kind_t;
 
@@ -479,19 +481,19 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  2
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   33
+#define YYLAST   35
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  25
+#define YYNTOKENS  26
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  6
 /* YYNRULES -- Number of rules.  */
 #define YYNRULES  20
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  40
+#define YYNSTATES  42
 
 /* YYMAXUTOK -- Last valid token kind.  */
-#define YYMAXUTOK   278
+#define YYMAXUTOK   279
 
 
 /* YYTRANSLATE(TOKEN-NUM) -- Symbol number corresponding to TOKEN-NUM
@@ -511,7 +513,7 @@ static const yytype_int8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,    24,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,    25,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -532,16 +534,16 @@ static const yytype_int8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
        5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
-      15,    16,    17,    18,    19,    20,    21,    22,    23
+      15,    16,    17,    18,    19,    20,    21,    22,    23,    24
 };
 
 #if YYDEBUG
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int8 yyrline[] =
 {
-       0,    41,    41,    43,    47,    48,    49,    50,    51,    52,
-      64,    65,    66,    67,    68,    69,    73,    83,   106,   115,
-     123
+       0,    43,    43,    45,    49,    50,    51,    52,    53,    54,
+      66,    67,    68,    69,    70,    71,    75,    85,   108,   118,
+     126
 };
 #endif
 
@@ -560,8 +562,9 @@ static const char *const yytname[] =
   "\"end of file\"", "error", "\"invalid token\"", "NUMBER",
   "STRING_LITERAL", "IMPORT", "PREPROCESS", "VISUALIZE", "MODEL", "EXPORT",
   "SPLIT", "SUMMARIZE", "SETFILE", "KERNEL", "AUTO_MODEL", "X", "Y", "C",
-  "GAMMA", "TRAIN_SIZE", "METHOD", "TARGET", "SAVE_MODEL", "EVAL", "'='",
-  "$accept", "program", "statement", "preprocessing", "visualize", "model", YY_NULLPTR
+  "GAMMA", "TRAIN_SIZE", "METHOD", "TARGET", "SAVE_MODEL", "DET_OUTLIERS",
+  "DIM", "'='", "$accept", "program", "statement", "preprocessing",
+  "visualize", "model", YY_NULLPTR
 };
 
 static const char *
@@ -586,9 +589,10 @@ yysymbol_name (yysymbol_kind_t yysymbol)
 static const yytype_int8 yypact[] =
 {
      -17,     0,   -17,    -3,    -1,    -2,    10,    11,    12,   -17,
-      13,    14,   -17,   -17,   -17,   -16,   -17,   -17,    -5,   -17,
-       2,   -17,   -17,   -17,   -17,   -17,   -17,    18,    21,     3,
-     -17,    15,    23,     4,    16,    25,     6,   -17,    29,   -17
+      13,    14,   -17,   -17,   -17,   -16,   -17,   -17,    -6,   -17,
+       2,   -17,   -17,   -17,   -17,   -17,   -17,    18,    21,     1,
+       3,    15,    25,    26,     4,    16,   -17,    28,     9,   -17,
+      32,   -17
 };
 
 /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -599,7 +603,8 @@ static const yytype_int8 yydefact[] =
        2,     0,     1,     0,     0,     0,     0,     0,     0,    11,
        0,     0,    14,     3,     4,    16,     5,    18,     0,     6,
       20,     8,     7,    12,    13,    15,    10,     0,     0,     0,
-      17,     0,     0,     0,     0,     0,     0,    19,     0,     9
+       0,     0,     0,     0,     0,     0,    17,     0,     0,    19,
+       0,     9
 };
 
 /* YYPGOTO[NTERM-NUM].  */
@@ -621,41 +626,42 @@ static const yytype_int8 yytable[] =
 {
        2,    14,    17,    15,    27,     3,     4,     5,     6,     7,
        8,     9,    10,    18,    20,    23,    24,    25,    26,    28,
-      29,    11,    30,    12,    21,    31,    34,    32,    35,    37,
-      38,    33,    39,    36
+      29,    11,    30,    12,    21,    31,    32,    33,    35,    37,
+      36,    34,    39,    38,    40,    41
 };
 
 static const yytype_int8 yycheck[] =
 {
        0,     4,     4,     4,    20,     5,     6,     7,     8,     9,
-      10,    11,    12,    15,     4,     4,     4,     4,     4,    24,
-      18,    21,     4,    23,    14,     4,     3,    24,    24,     4,
-      24,    16,     3,    17
+      10,    11,    12,    15,     4,     4,     4,     4,     4,    25,
+      18,    21,     4,    23,    14,     4,    25,    24,     3,    25,
+       4,    16,     4,    17,    25,     3
 };
 
 /* YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
    state STATE-NUM.  */
 static const yytype_int8 yystos[] =
 {
-       0,    26,     0,     5,     6,     7,     8,     9,    10,    11,
-      12,    21,    23,    27,     4,     4,    28,     4,    15,    29,
-       4,    14,    30,     4,     4,     4,     4,    20,    24,    18,
-       4,     4,    24,    16,     3,    24,    17,     4,    24,     3
+       0,    27,     0,     5,     6,     7,     8,     9,    10,    11,
+      12,    21,    23,    28,     4,     4,    29,     4,    15,    30,
+       4,    14,    31,     4,     4,     4,     4,    20,    25,    18,
+       4,     4,    25,    24,    16,     3,     4,    25,    17,     4,
+      25,     3
 };
 
 /* YYR1[RULE-NUM] -- Symbol kind of the left-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr1[] =
 {
-       0,    25,    26,    26,    27,    27,    27,    27,    27,    27,
-      27,    27,    27,    27,    27,    27,    28,    28,    29,    29,
-      30
+       0,    26,    27,    27,    28,    28,    28,    28,    28,    28,
+      28,    28,    28,    28,    28,    28,    29,    29,    30,    30,
+      31
 };
 
 /* YYR2[RULE-NUM] -- Number of symbols on the right-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr2[] =
 {
        0,     2,     0,     2,     2,     2,     2,     2,     2,     8,
-       2,     1,     2,     2,     1,     2,     1,     3,     1,     6,
+       2,     1,     2,     2,     1,     2,     1,     5,     1,     6,
        1
 };
 
@@ -1120,37 +1126,37 @@ yyreduce:
   switch (yyn)
     {
   case 4: /* statement: IMPORT STRING_LITERAL  */
-#line 47 "parser.y"
-                                     { filename = strdup((yyvsp[0].str)); printf("Importing data file: %s\n", (yyvsp[0].str)); free((yyvsp[0].str)); }
-#line 1126 "parser.c"
-    break;
-
-  case 5: /* statement: PREPROCESS preprocessing  */
-#line 48 "parser.y"
-                                     { printf("Preprocess called with: %s\n", (yyvsp[0].str)); free((yyvsp[0].str)); }
+#line 49 "parser.y"
+                                     { filename = strdup((yyvsp[0].str)); initialize_python(); printf("Importing data file: %s\n", (yyvsp[0].str)); free((yyvsp[0].str)); }
 #line 1132 "parser.c"
     break;
 
-  case 6: /* statement: VISUALIZE visualize  */
-#line 49 "parser.y"
-                                     { printf("Visualization type: %s\n", (yyvsp[0].str)); free((yyvsp[0].str)); }
+  case 5: /* statement: PREPROCESS preprocessing  */
+#line 50 "parser.y"
+                                     { printf("Preprocess called with: %s\n", (yyvsp[0].str)); free((yyvsp[0].str)); }
 #line 1138 "parser.c"
     break;
 
-  case 7: /* statement: MODEL model  */
-#line 50 "parser.y"
-                                     { printf("Model specified: %s\n", (yyvsp[0].str)); free((yyvsp[0].str)); }
+  case 6: /* statement: VISUALIZE visualize  */
+#line 51 "parser.y"
+                                     { printf("Visualization type: %s\n", (yyvsp[0].str)); free((yyvsp[0].str)); }
 #line 1144 "parser.c"
     break;
 
-  case 8: /* statement: MODEL AUTO_MODEL  */
-#line 51 "parser.y"
-                                     { printf("Auto model selection enabled.\n"); run_auto_model(); }
+  case 7: /* statement: MODEL model  */
+#line 52 "parser.y"
+                                     { printf("Model specified: %s\n", (yyvsp[0].str)); free((yyvsp[0].str)); }
 #line 1150 "parser.c"
     break;
 
+  case 8: /* statement: MODEL AUTO_MODEL  */
+#line 53 "parser.y"
+                                     { printf("Auto model selection enabled.\n"); run_auto_model(); }
+#line 1156 "parser.c"
+    break;
+
   case 9: /* statement: MODEL STRING_LITERAL GAMMA '=' NUMBER C '=' NUMBER  */
-#line 52 "parser.y"
+#line 54 "parser.y"
                                                          {
                                       if (strcmp((yyvsp[-6].str), "\"SVM\"") == 0) {
                                           svm_gamma = (yyvsp[-3].num);
@@ -1163,70 +1169,70 @@ yyreduce:
                                       }
                                       free((yyvsp[-6].str));
                                     }
-#line 1167 "parser.c"
-    break;
-
-  case 10: /* statement: TARGET STRING_LITERAL  */
-#line 64 "parser.y"
-                                     { target = strdup((yyvsp[0].str)); printf("Target variable set: %s\n", target); free((yyvsp[0].str)); }
 #line 1173 "parser.c"
     break;
 
-  case 11: /* statement: SUMMARIZE  */
-#line 65 "parser.y"
-                                     { printf("Generating summary report.\n"); }
+  case 10: /* statement: TARGET STRING_LITERAL  */
+#line 66 "parser.y"
+                                     { target = strdup((yyvsp[0].str)); printf("Target variable set: %s\n", target); free((yyvsp[0].str)); }
 #line 1179 "parser.c"
     break;
 
-  case 12: /* statement: EXPORT STRING_LITERAL  */
-#line 66 "parser.y"
-                                     { export_to_file((yyvsp[0].str)); }
+  case 11: /* statement: SUMMARIZE  */
+#line 67 "parser.y"
+                                     { printf("Generating summary report.\n"); }
 #line 1185 "parser.c"
     break;
 
-  case 13: /* statement: SPLIT STRING_LITERAL  */
-#line 67 "parser.y"
-                                     { set_split_size((yyvsp[0].str)); }
+  case 12: /* statement: EXPORT STRING_LITERAL  */
+#line 68 "parser.y"
+                                     { export_to_file((yyvsp[0].str)); }
 #line 1191 "parser.c"
     break;
 
-  case 14: /* statement: EVAL  */
-#line 68 "parser.y"
-                                     { printf("Evaluating model performance.\n"); evaluate_model(); }
+  case 13: /* statement: SPLIT STRING_LITERAL  */
+#line 69 "parser.y"
+                                     { set_split_size((yyvsp[0].str)); }
 #line 1197 "parser.c"
     break;
 
-  case 15: /* statement: SETFILE STRING_LITERAL  */
-#line 69 "parser.y"
-                                     { filename = strdup((yyvsp[0].str)); }
+  case 14: /* statement: DET_OUTLIERS  */
+#line 70 "parser.y"
+                                     { printf("Evaluating model performance.\n"); print_outliers(filename,target); }
 #line 1203 "parser.c"
     break;
 
+  case 15: /* statement: SETFILE STRING_LITERAL  */
+#line 71 "parser.y"
+                                     { filename = strdup((yyvsp[0].str)); }
+#line 1209 "parser.c"
+    break;
+
   case 16: /* preprocessing: STRING_LITERAL  */
-#line 73 "parser.y"
+#line 75 "parser.y"
                                      { 
-                                      if (strcmp((yyvsp[0].str), "\"Scaling\"") == 0) {
-                                          (yyval.str) = strdup("Scaling");
-                                          scale_data(filename);
+                                      if (strcmp((yyvsp[0].str), "\"General\"") == 0) {
+                                          (yyval.str) = strdup("General");
+                                          preprocess(filename,target);
                                       } else {
-                                          yyerror("Invalid preprocessing type. Expected \"Scaling\" or \"Dimensionality Reduction\"");
+                                          yyerror("Invalid preprocessing type. Expected \"General\" or \"Dimensionality Reduction\"");
                                           YYERROR;
                                       }
                                       free((yyvsp[0].str));
                                     }
-#line 1218 "parser.c"
+#line 1224 "parser.c"
     break;
 
-  case 17: /* preprocessing: STRING_LITERAL METHOD STRING_LITERAL  */
-#line 83 "parser.y"
-                                            { 
-                                      if (strcmp((yyvsp[-2].str), "\"Dimensionality Reduction\"") == 0) {
-                                          if (strcmp((yyvsp[0].str), "\"PCA\"") == 0 ||
-                                              strcmp((yyvsp[0].str), "\"LDA\"") == 0 ||
-                                              strcmp((yyvsp[0].str), "\"TSNE\"") == 0) {
+  case 17: /* preprocessing: STRING_LITERAL METHOD STRING_LITERAL DIM STRING_LITERAL  */
+#line 85 "parser.y"
+                                                               { 
+                                      if (strcmp((yyvsp[-4].str), "\"Dimensionality Reduction\"") == 0) {
+                                          if (strcmp((yyvsp[-2].str), "\"PCA\"") == 0 ||
+                                              strcmp((yyvsp[-2].str), "\"LDA\"") == 0 ||
+                                              strcmp((yyvsp[-2].str), "\"TSNE\"") == 0) {
                                               char buffer[100];
-                                              snprintf(buffer, sizeof(buffer), "Dimensionality Reduction with %s", (yyvsp[0].str));
-                                              reduce_dimensions((yyvsp[0].str));
+                                              snprintf(buffer, sizeof(buffer), "Dimensionality Reduction with %s", (yyvsp[-2].str));
+                                              reduce_dimensions(filename,(yyvsp[-2].str),(yyvsp[0].str));
                                               (yyval.str) = strdup(buffer);
                                           } else {
                                               yyerror("Invalid method. Expected PCA, LDA, or TSNE");
@@ -1236,38 +1242,39 @@ yyreduce:
                                           yyerror("Only Dimensionality Reduction accepts method parameter");
                                           YYERROR;
                                       }
+                                      free((yyvsp[-4].str));
                                       free((yyvsp[-2].str));
-                                      free((yyvsp[0].str));
                                     }
-#line 1243 "parser.c"
+#line 1249 "parser.c"
     break;
 
   case 18: /* visualize: STRING_LITERAL  */
-#line 106 "parser.y"
+#line 108 "parser.y"
                                      {
                                       if (strcmp((yyvsp[0].str), "\"Box Plot\"") == 0 || strcmp((yyvsp[0].str), "\"Scatter Plot\"") == 0) {
                                           (yyval.str) = strdup((yyvsp[0].str));
+                                          vis_boxplot(filename,target);
                                       } else {
                                           yyerror("Invalid visualization type. Expected \"Box Plot\" or \"Scatter Plot\"");
                                           YYERROR;
                                       }
                                       free((yyvsp[0].str));
                                     }
-#line 1257 "parser.c"
+#line 1264 "parser.c"
     break;
 
   case 19: /* visualize: X '=' STRING_LITERAL Y '=' STRING_LITERAL  */
-#line 115 "parser.y"
+#line 118 "parser.y"
                                                 {
                                       printf("Plotting with x-axis: %s, y-axis: %s\n", (yyvsp[-3].str), (yyvsp[0].str));
                                       free((yyvsp[-3].str));
                                       free((yyvsp[0].str));
                                     }
-#line 1267 "parser.c"
+#line 1274 "parser.c"
     break;
 
   case 20: /* model: STRING_LITERAL  */
-#line 123 "parser.y"
+#line 126 "parser.y"
                                      { 
                                       if (strcmp((yyvsp[0].str), "\"Linear Regression\"") == 0) {
                                           (yyval.str) = strdup("Linear Regression");
@@ -1285,11 +1292,11 @@ yyreduce:
                                       }
                                       free((yyvsp[0].str));
                                     }
-#line 1289 "parser.c"
+#line 1296 "parser.c"
     break;
 
 
-#line 1293 "parser.c"
+#line 1300 "parser.c"
 
       default: break;
     }
@@ -1482,7 +1489,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 142 "parser.y"
+#line 145 "parser.y"
 
 
 void yyerror(const char *s) {

@@ -1,7 +1,7 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
-#include "parser.tab.h"
+#include "parser.h"
 %}
 
 %%
@@ -24,9 +24,10 @@
 "gamma"             { return GAMMA; }
 "train_size"        { return TRAIN_SIZE; }
 "method"            { return METHOD; }
+"dim"               { return DIM; }
 "target"            { return TARGET; }
 "save_model"        { return SAVE_MODEL; }
-"eval"              { return EVAL; }
+"det_outliers"      { return DET_OUTLIERS; }
 "="                 { return '='; }
 
 [ \t\n]+            /* Ignore whitespace */
