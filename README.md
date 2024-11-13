@@ -26,7 +26,7 @@ This project is a Domain-Specific Language (DSL) Compiler designed to parse and 
 ### Installation
 1. Clone this repository:
    ```bash
-   git clone https://github.com/YourUsername/your-repository.git
+   git clone https://github.com/YourUsername/your-repository.git](https://github.com/Ashwinth04/Statistical-Analysis-Tool
    cd your-repository
    source venv/bin/activate
    ./build.sh
