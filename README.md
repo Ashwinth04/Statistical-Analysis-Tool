@@ -26,8 +26,8 @@ This project is a Domain-Specific Language (DSL) Compiler designed to parse and 
 ### Installation
 1. Install the required packages:
    ```bash
-      sudo apt-get install flex bison
-      sudo apt-get install python3-dev
+   sudo apt-get install flex bison
+   sudo apt-get install python3-dev
 3. Clone this repository:
    ```bash
    git clone https://github.com/Ashwinth04/Statistical-Analysis-Tool
