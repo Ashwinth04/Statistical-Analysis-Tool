@@ -78,7 +78,7 @@ extern void yyerror(const char *s);
 
 void run_linear_regression();
 void run_knn();
-void run_svm(double gamma, double C);
+void run_svm();
 void preprocess(char *path,char* target);
 void export_to_file();
 void set_split_size();
@@ -1282,10 +1282,10 @@ yyreduce:
                                           run_linear_regression(filename,target);
                                       } else if (strcmp((yyvsp[0].str), "\"KNN\"") == 0) {
                                           (yyval.str) = strdup("KNN");
-                                          run_knn();
+                                          run_knn(filename,target,5);
                                       } else if (strcmp((yyvsp[0].str), "\"SVM\"") == 0) {
                                           (yyval.str) = strdup("SVM");
-                                          run_svm(svm_gamma, svm_C);
+                                          run_svm(filename,target,svm_gamma, svm_C);
                                       } else {
                                           yyerror("Invalid model type. Expected \"Linear Regression\", \"KNN\", or \"SVM\"");
                                           YYERROR;

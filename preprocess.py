@@ -2,13 +2,18 @@ import pandas as pd
 from sklearn.preprocessing import LabelEncoder, MinMaxScaler
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_squared_error
+from sklearn.metrics import mean_squared_error, accuracy_score, classification_report
 import sys
 from sklearn.decomposition import PCA
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
 from sklearn.manifold import TSNE
 import matplotlib.pyplot as plt
 import seaborn as sns
+from sklearn.svm import SVC
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import cross_val_score
+
 
 
 def preprocess_data(filename, target):
@@ -185,3 +190,129 @@ def boxplot(filename, target_variable, output_filename="boxplot.png"):
     plt.close()
 
     print(f"Boxplot saved as {output_filename}")
+
+def run_svm(filename, target, gamma=1.0, C=1.0):
+    """
+    Train and evaluate an SVM model with given parameters.
+    
+    Parameters:
+    filename (str): Path to the CSV file
+    target (str): Name of the target variable
+    gamma (float): Kernel coefficient for 'rbf' kernel
+    C (float): Regularization parameter
+    """
+    # Load and prepare the dataset
+    filename = filename[1:-1]
+    target = target[1:-1]
+    data = pd.read_csv(filename)
+    
+    # Separate features and target variable
+    X = data.drop(columns=[target])
+    y = data[target]
+    
+    # Split the dataset
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    
+    # Create and train the SVM model
+    svm_model = SVC(gamma=gamma, C=C, kernel='rbf')
+    svm_model.fit(X_train, y_train)
+    
+    # Make predictions
+    y_pred = svm_model.predict(X_test)
+    
+    # Calculate and print metrics
+    accuracy = accuracy_score(y_test, y_pred)
+    print("\nSVM Model Performance:")
+    print(f"Accuracy: {accuracy:.4f}")
+
+
+def run_knn(filename, target, n_neighbors=5):
+    """
+    Train and evaluate a KNN model.
+    
+    Parameters:
+    filename (str): Path to the CSV file
+    target (str): Name of the target variable
+    n_neighbors (int): Number of neighbors to use
+    """
+    # Load and prepare the dataset
+    filename = filename[1:-1]
+    target = target[1:-1]
+    data = pd.read_csv(filename)
+    
+    # Separate features and target variable
+    X = data.drop(columns=[target])
+    y = data[target]
+    
+    # Split the dataset
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    
+    # Create and train the KNN model
+    knn_model = KNeighborsClassifier(n_neighbors=n_neighbors)
+    knn_model.fit(X_train, y_train)
+    
+    # Make predictions
+    y_pred = knn_model.predict(X_test)
+    
+    # Calculate and print metrics
+    accuracy = accuracy_score(y_test, y_pred)
+    print("\nKNN Model Performance:")
+    print(f"Accuracy: {accuracy:.4f}")
+    print("\nDetailed Classification Report:")
+    print(classification_report(y_test, y_pred))
+    
+    # Optional: Find optimal k value
+    def optimize_k():
+        k_range = range(1, 31)
+        k_scores = []
+        
+        for k in k_range:
+            knn = KNeighborsClassifier(n_neighbors=k)
+            scores = cross_val_score(knn, X_train, y_train, cv=5, scoring='accuracy')
+            k_scores.append(scores.mean())
+        
+        # Plot k values vs accuracy
+        plt.figure(figsize=(10, 6))
+        plt.plot(k_range, k_scores)
+        plt.xlabel('Value of K')
+        plt.ylabel('Cross-validated Accuracy')
+        plt.title('Accuracy vs. K Value')
+        plt.savefig('knn_optimization.png')
+        plt.close()
+        
+        # Get optimal k
+        optimal_k = k_range[k_scores.index(max(k_scores))]
+        print(f"\nOptimal k value: {optimal_k}")
+        print(f"Best accuracy: {max(k_scores):.4f}")
+        
+        return optimal_k
+
+    def analyze_feature_importance():
+        """
+        Analyze feature importance using permutation importance
+        """
+        from sklearn.inspection import permutation_importance
+        
+        result = permutation_importance(knn_model, X_test, y_test, n_repeats=10, random_state=42)
+        feature_importance = pd.DataFrame({
+            'feature': X.columns,
+            'importance': result.importances_mean
+        }).sort_values('importance', ascending=False)
+        
+        print("\nFeature Importance:")
+        print(feature_importance)
+        
+        # Plot feature importance
+        plt.figure(figsize=(10, 6))
+        plt.bar(feature_importance['feature'], feature_importance['importance'])
+        plt.xticks(rotation=45)
+        plt.title('Feature Importance in KNN Model')
+        plt.tight_layout()
+        plt.savefig('knn_feature_importance.png')
+        plt.close()
+    
+    # Run feature importance analysis
+    optimize_k()
+    analyze_feature_importance()
+    
+    return knn_model

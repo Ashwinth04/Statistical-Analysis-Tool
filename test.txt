@@ -7,7 +7,7 @@ preprocess "Dimensionality Reduction" method "PCA" dim "2"
 export "processed.csv"
 visualize "Box Plot"
 visualize "Scatter Plot"
-model "Linear Regression"
+model "SVM"
 export "output.csv"
 split "0.8"
 model auto_model
