@@ -28,5 +28,6 @@ This project is a Domain-Specific Language (DSL) Compiler designed to parse and 
    ```bash
    git clone https://github.com/YourUsername/your-repository.git
    cd your-repository
+   source venv/bin/activate
    ./build.sh
    ./statpiler < <program_name>.txt
