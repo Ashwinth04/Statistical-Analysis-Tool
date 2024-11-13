@@ -23,6 +23,7 @@ char* filename;
 double svm_gamma = 0.0; 
 double svm_C = 1.0;
 char *target;
+
 %}
 
 %union {
@@ -36,12 +37,12 @@ char *target;
 %token IMPORT PREPROCESS VISUALIZE MODEL EXPORT SPLIT SUMMARIZE SETFILE
 %token KERNEL AUTO_MODEL X Y C GAMMA TRAIN_SIZE METHOD TARGET SAVE_MODEL DET_OUTLIERS
 %token DIM
-%type <str> program statement preprocessing method_clause visualize model
+%type <str> program statement preprocessing visualize model
 
 %%
 
 program:
-    /* Empty */
+    /* Empty */                       { /* Do Nothing */ }
     | program statement
     ;
 

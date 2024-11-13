@@ -22,7 +22,6 @@ def preprocess_data(filename, target):
     for column in data.select_dtypes(include=['object']).columns:
         le = LabelEncoder()
         data[column] = le.fit_transform(data[column])
-        print("HI")
         label_encoders[column] = le
     
     # Normalize the data except the target column

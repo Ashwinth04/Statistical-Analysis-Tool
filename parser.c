@@ -94,7 +94,8 @@ double svm_gamma = 0.0;
 double svm_C = 1.0;
 char *target;
 
-#line 98 "parser.c"
+
+#line 99 "parser.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -541,9 +542,9 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int8 yyrline[] =
 {
-       0,    43,    43,    45,    49,    50,    51,    52,    53,    54,
-      66,    67,    68,    69,    70,    71,    75,    85,   108,   118,
-     126
+       0,    45,    45,    46,    50,    51,    52,    53,    54,    55,
+      67,    68,    69,    70,    71,    72,    76,    86,   109,   119,
+     127
 };
 #endif
 
@@ -1125,38 +1126,44 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
+  case 2: /* program: %empty  */
+#line 45 "parser.y"
+                                      { /* Do Nothing */ }
+#line 1133 "parser.c"
+    break;
+
   case 4: /* statement: IMPORT STRING_LITERAL  */
-#line 49 "parser.y"
+#line 50 "parser.y"
                                      { filename = strdup((yyvsp[0].str)); initialize_python(); printf("Importing data file: %s\n", (yyvsp[0].str)); free((yyvsp[0].str)); }
-#line 1132 "parser.c"
+#line 1139 "parser.c"
     break;
 
   case 5: /* statement: PREPROCESS preprocessing  */
-#line 50 "parser.y"
+#line 51 "parser.y"
                                      { printf("Preprocess called with: %s\n", (yyvsp[0].str)); free((yyvsp[0].str)); }
-#line 1138 "parser.c"
+#line 1145 "parser.c"
     break;
 
   case 6: /* statement: VISUALIZE visualize  */
-#line 51 "parser.y"
+#line 52 "parser.y"
                                      { printf("Visualization type: %s\n", (yyvsp[0].str)); free((yyvsp[0].str)); }
-#line 1144 "parser.c"
+#line 1151 "parser.c"
     break;
 
   case 7: /* statement: MODEL model  */
-#line 52 "parser.y"
+#line 53 "parser.y"
                                      { printf("Model specified: %s\n", (yyvsp[0].str)); free((yyvsp[0].str)); }
-#line 1150 "parser.c"
+#line 1157 "parser.c"
     break;
 
   case 8: /* statement: MODEL AUTO_MODEL  */
-#line 53 "parser.y"
+#line 54 "parser.y"
                                      { printf("Auto model selection enabled.\n"); run_auto_model(); }
-#line 1156 "parser.c"
+#line 1163 "parser.c"
     break;
 
   case 9: /* statement: MODEL STRING_LITERAL GAMMA '=' NUMBER C '=' NUMBER  */
-#line 54 "parser.y"
+#line 55 "parser.y"
                                                          {
                                       if (strcmp((yyvsp[-6].str), "\"SVM\"") == 0) {
                                           svm_gamma = (yyvsp[-3].num);
@@ -1169,47 +1176,47 @@ yyreduce:
                                       }
                                       free((yyvsp[-6].str));
                                     }
-#line 1173 "parser.c"
+#line 1180 "parser.c"
     break;
 
   case 10: /* statement: TARGET STRING_LITERAL  */
-#line 66 "parser.y"
+#line 67 "parser.y"
                                      { target = strdup((yyvsp[0].str)); printf("Target variable set: %s\n", target); free((yyvsp[0].str)); }
-#line 1179 "parser.c"
+#line 1186 "parser.c"
     break;
 
   case 11: /* statement: SUMMARIZE  */
-#line 67 "parser.y"
+#line 68 "parser.y"
                                      { printf("Generating summary report.\n"); }
-#line 1185 "parser.c"
+#line 1192 "parser.c"
     break;
 
   case 12: /* statement: EXPORT STRING_LITERAL  */
-#line 68 "parser.y"
+#line 69 "parser.y"
                                      { export_to_file((yyvsp[0].str)); }
-#line 1191 "parser.c"
+#line 1198 "parser.c"
     break;
 
   case 13: /* statement: SPLIT STRING_LITERAL  */
-#line 69 "parser.y"
+#line 70 "parser.y"
                                      { set_split_size((yyvsp[0].str)); }
-#line 1197 "parser.c"
+#line 1204 "parser.c"
     break;
 
   case 14: /* statement: DET_OUTLIERS  */
-#line 70 "parser.y"
+#line 71 "parser.y"
                                      { printf("Evaluating model performance.\n"); print_outliers(filename,target); }
-#line 1203 "parser.c"
+#line 1210 "parser.c"
     break;
 
   case 15: /* statement: SETFILE STRING_LITERAL  */
-#line 71 "parser.y"
+#line 72 "parser.y"
                                      { filename = strdup((yyvsp[0].str)); }
-#line 1209 "parser.c"
+#line 1216 "parser.c"
     break;
 
   case 16: /* preprocessing: STRING_LITERAL  */
-#line 75 "parser.y"
+#line 76 "parser.y"
                                      { 
                                       if (strcmp((yyvsp[0].str), "\"General\"") == 0) {
                                           (yyval.str) = strdup("General");
@@ -1220,11 +1227,11 @@ yyreduce:
                                       }
                                       free((yyvsp[0].str));
                                     }
-#line 1224 "parser.c"
+#line 1231 "parser.c"
     break;
 
   case 17: /* preprocessing: STRING_LITERAL METHOD STRING_LITERAL DIM STRING_LITERAL  */
-#line 85 "parser.y"
+#line 86 "parser.y"
                                                                { 
                                       if (strcmp((yyvsp[-4].str), "\"Dimensionality Reduction\"") == 0) {
                                           if (strcmp((yyvsp[-2].str), "\"PCA\"") == 0 ||
@@ -1245,11 +1252,11 @@ yyreduce:
                                       free((yyvsp[-4].str));
                                       free((yyvsp[-2].str));
                                     }
-#line 1249 "parser.c"
+#line 1256 "parser.c"
     break;
 
   case 18: /* visualize: STRING_LITERAL  */
-#line 108 "parser.y"
+#line 109 "parser.y"
                                      {
                                       if (strcmp((yyvsp[0].str), "\"Box Plot\"") == 0 || strcmp((yyvsp[0].str), "\"Scatter Plot\"") == 0) {
                                           (yyval.str) = strdup((yyvsp[0].str));
@@ -1260,21 +1267,21 @@ yyreduce:
                                       }
                                       free((yyvsp[0].str));
                                     }
-#line 1264 "parser.c"
+#line 1271 "parser.c"
     break;
 
   case 19: /* visualize: X '=' STRING_LITERAL Y '=' STRING_LITERAL  */
-#line 118 "parser.y"
+#line 119 "parser.y"
                                                 {
                                       printf("Plotting with x-axis: %s, y-axis: %s\n", (yyvsp[-3].str), (yyvsp[0].str));
                                       free((yyvsp[-3].str));
                                       free((yyvsp[0].str));
                                     }
-#line 1274 "parser.c"
+#line 1281 "parser.c"
     break;
 
   case 20: /* model: STRING_LITERAL  */
-#line 126 "parser.y"
+#line 127 "parser.y"
                                      { 
                                       if (strcmp((yyvsp[0].str), "\"Linear Regression\"") == 0) {
                                           (yyval.str) = strdup("Linear Regression");
@@ -1292,11 +1299,11 @@ yyreduce:
                                       }
                                       free((yyvsp[0].str));
                                     }
-#line 1296 "parser.c"
+#line 1303 "parser.c"
     break;
 
 
-#line 1300 "parser.c"
+#line 1307 "parser.c"
 
       default: break;
     }
@@ -1489,7 +1496,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 145 "parser.y"
+#line 146 "parser.y"
 
 
 void yyerror(const char *s) {
