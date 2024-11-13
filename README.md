@@ -24,10 +24,15 @@ This project is a Domain-Specific Language (DSL) Compiler designed to parse and 
 4. **GCC**: Compiler for C files.
 
 ### Installation
-1. Clone this repository:
+1. Install the required packages:
+   ```bash
+      sudo apt-get install flex bison
+      sudo apt-get install python3-dev
+3. Clone this repository:
    ```bash
    git clone https://github.com/Ashwinth04/Statistical-Analysis-Tool
    cd Statistical-Analysis-Tool
    source venv/bin/activate
+   pip install -r requirements.txt
    ./build.sh
    ./statpiler < <program_name>.txt
