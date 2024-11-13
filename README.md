@@ -27,7 +27,7 @@ This project is a Domain-Specific Language (DSL) Compiler designed to parse and 
 1. Clone this repository:
    ```bash
    git clone https://github.com/Ashwinth04/Statistical-Analysis-Tool
-   cd your-repository
+   cd Statistical-Analysis-Tool
    source venv/bin/activate
    ./build.sh
    ./statpiler < <program_name>.txt
